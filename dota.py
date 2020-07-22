@@ -82,5 +82,5 @@ async def on_message(message):
             if (game):
                 await message.channel.send(create_result_string(mentioned_user, game))
 
-client.run('NzM1NTM4MTg1NTk3MDkxOTcx.XxiZLw.0-VjH7eYBOnbhIUZMUQcEUyMAWc')
+client.run('PUT_TOKEN_HERE')
 
