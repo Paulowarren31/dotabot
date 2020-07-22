@@ -4,7 +4,10 @@ import requests
 client = discord.Client()
 
 # maps discord account ID to steam32 ID
-discord_steam_mapping = {81786922485153792 : '69264271', 81787338308452352 : '78187819'}
+discord_steam_mapping = {81786922485153792 : '69264271', 81787338308452352 : '78187819', 81887508924731392: '104785056', 161935984542482432: '326513851', 175439973288247296: '209646309'}
+
+def add_steam_mapping(discord_id, steam_id):
+    discord_steam_mapping[discord_id] = steam_id
 
 def get_match_info(match_id):
     link = 'https://api.opendota.com/api/matches/' + match_id
@@ -25,11 +28,16 @@ def create_result_string(mentioned_user, game):
     match_info = get_match_info(str(game['match_id']))
     player_match_info = match_info['players'][game['player_slot']]
     
-    gold = str(player_match_info['gold'])
+    gold = str(player_match_info['gold'] + player_match_info['gold_spent'])
     hero_damage = str(player_match_info['hero_damage'])
     last_hits = str(player_match_info['last_hits'])
 
+    seconds = abs(player_match_info['duration'])
+    hours, seconds = divmod(seconds, 3600)
+    minutes, seconds = divmod(seconds, 60)
+
     result_string = mentioned_user.display_name + ' DID THEY FEED? \n'
+    result_string += str(hours) + ':' + str(minutes) + ':' + str(seconds) + '\n'
     result_string += '(K/D/A): ' +  kills + '/' + deaths + '/' + assists + '\n'
     result_string += 'GPM: ' + gpm + ' XPM: ' + xpm + '\n'
     result_string += 'Last hits: ' + last_hits + '\n'
@@ -62,5 +70,5 @@ async def on_message(message):
             if (game):
                 await message.channel.send(create_result_string(mentioned_user, game))
 
-client.run('NzM1NTM4MTg1NTk3MDkxOTcx.XxhuGQ.epwuuKhQUvhOnYZkifRy4HBP1Yg')
+client.run('NzM1NTM4MTg1NTk3MDkxOTcx.XxiZLw.0-VjH7eYBOnbhIUZMUQcEUyMAWc')
 
