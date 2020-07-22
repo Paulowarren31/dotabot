@@ -7,12 +7,13 @@ client = discord.Client()
 discord_steam_mapping = {81786922485153792 : '69264271', 81787338308452352 : '78187819', 81887508924731392: '104785056', 161935984542482432: '326513851', 175439973288247296: '209646309'}
 
 def get_last_hits_per_ten(last_hits_per_min):
-  idx = 10
-  result = []
-  while idx < len(last_hits_per_min):
-      result.append(last_hits_per_min[idx])
-      idx += 10
-  return result
+  if last_hits_per_min is not None:
+    idx = 10
+    result = []
+    while idx < len(last_hits_per_min):
+        result.append(last_hits_per_min[idx])
+        idx += 10
+    return result
 
 def add_steam_mapping(discord_id, steam_id):
     discord_steam_mapping[discord_id] = steam_id
@@ -51,7 +52,8 @@ def create_result_string(mentioned_user, game):
     result_string += kills + '/' + deaths + '/' + assists + '\n'
     result_string += 'Gold: ' + gold + '\n'
     result_string += 'GPM: ' + gpm + ' XPM: ' + xpm + '\n'
-    result_string += 'LH: ' + last_hits_per_ten.join('/') + '\n'
+    if last_hits_per_ten is not None:
+      result_string += 'LH: ' + last_hits_per_ten.join('/') + '\n'
     #result_string += 'Hero Damage: ' + hero_damage + '\n'
 
     return result_string
@@ -80,5 +82,5 @@ async def on_message(message):
             if (game):
                 await message.channel.send(create_result_string(mentioned_user, game))
 
-#client.run('NzM1NTM4MTg1NTk3MDkxOTcx.XxiZLw.0-VjH7eYBOnbhIUZMUQcEUyMAWc')
+client.run('NzM1NTM4MTg1NTk3MDkxOTcx.XxiZLw.0-VjH7eYBOnbhIUZMUQcEUyMAWc')
 
