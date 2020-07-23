@@ -6,6 +6,17 @@ client = discord.Client()
 # maps discord account ID to steam32 ID
 discord_steam_mapping = {81786922485153792 : '69264271', 81787338308452352 : '78187819', 81887508924731392: '104785056', 161935984542482432: '326513851', 175439973288247296: '209646309'}
 
+hero_map = {}
+
+def populate_hero_map():
+  link = 'https://api.opendota.com/api/heroes'
+  res = requests.get(link)
+  if res:
+    heroes = res.json()
+    for hero in heroes:
+      hero_map[hero['id']] = hero['localized_name']
+    print('populated hero map')
+
 def get_last_hits_per_ten(last_hits_per_min):
   if last_hits_per_min is not None:
     idx = 10
@@ -36,6 +47,9 @@ def create_result_string(mentioned_user, game):
 
     match_info = get_match_info(str(game['match_id']))
     player_match_info = match_info['players'][game['player_slot']]
+
+    hero_id = player_match_info['hero_id']
+    hero_name = hero_map[hero_id]
     
     gold = str(player_match_info['gold'] + player_match_info['gold_spent'])
     hero_damage = str(player_match_info['hero_damage'])
@@ -47,7 +61,9 @@ def create_result_string(mentioned_user, game):
     hours, seconds = divmod(seconds, 3600)
     minutes, seconds = divmod(seconds, 60)
 
-    result_string = mentioned_user.display_name + '\n' # + ' DID THEY FEED? \n'
+    player_name = str(player_match_info['personaname'])
+
+    result_string = player_name + ' (' + hero_name + ')' + '\n' # + ' DID THEY FEED? \n'
     #result_string += str(hours) + ':' + str(minutes) + ':' + str(seconds) + '\n'
     result_string += kills + '/' + deaths + '/' + assists + '\n'
     result_string += 'Gold: ' + gold + '\n'
@@ -82,5 +98,6 @@ async def on_message(message):
             if (game):
                 await message.channel.send(create_result_string(mentioned_user, game))
 
+populate_hero_map()
 client.run('PUT_TOKEN_HERE')
 
