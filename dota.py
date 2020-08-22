@@ -24,6 +24,7 @@ def get_last_hits_per_ten(last_hits_per_min):
     while idx < len(last_hits_per_min):
         result.append(last_hits_per_min[idx])
         idx += 10
+    result = [str(val) for val in result]
     return result
 
 def add_steam_mapping(discord_id, steam_id):
@@ -46,8 +47,12 @@ def create_result_string(mentioned_user, game):
     gpm = str(game['gold_per_min'])
 
     match_info = get_match_info(str(game['match_id']))
-    player_match_info = match_info['players'][game['player_slot']]
+    player_idx = game['player_slot']
+    if player_idx >= 128:
+        player_idx -= 123
+    player_match_info = match_info['players'][player_idx]
 
+    
     hero_id = player_match_info['hero_id']
     hero_name = hero_map[hero_id]
     
@@ -69,7 +74,7 @@ def create_result_string(mentioned_user, game):
     result_string += 'Gold: ' + gold + '\n'
     result_string += 'GPM: ' + gpm + ' XPM: ' + xpm + '\n'
     if last_hits_per_ten is not None:
-      result_string += 'LH: ' + last_hits_per_ten.join('/') + '\n'
+      result_string += 'LH: ' + '/'.join(last_hits_per_ten)[:5] + '\n'
     #result_string += 'Hero Damage: ' + hero_damage + '\n'
 
     return result_string
